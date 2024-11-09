@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Гороскоп</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="main">
+        <h1>Выберите знак зодиака</h1>
+        <div id="zodiac-images"></div>
+        
+        <div id="category-buttons" style="display: none;">
+            <button data-category="day">На день</button>
+            <button data-category="week">Неделя</button>
+            <button data-category="love">Любовный</button>
+            <button data-category="love_week">Любовный на неделю</button>
+            <button data-category="business">Бизнес</button>
+            <button data-category="business_week">Бизнес неделя</button>
+            <button data-category="tomorrow">Завтра</button>
+        </div>
+
+  <!-- Загрузочный индикатор -->
+    <div id="loadingSpinner" style="display: none;">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Этот элемент "result" для вывода результата -->
+    <div id="result"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
