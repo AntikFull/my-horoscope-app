@@ -4,7 +4,100 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Гороскоп</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+            min-height: 100%;
+            background-color: #000; /* Default to dark theme */
+            color: #fff;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        @media (prefers-color-scheme: light) {
+            body {
+                background-color: #f0f0f0;
+                color: #000;
+            }
+        }
+
+        #main {
+            max-width: 800px;
+            width: 100%;
+            margin: auto;
+            position: relative;
+            z-index: 10; /* Ensure main content is above stars */
+        }
+
+        #zodiac-images img {
+            width: 100px;
+            margin: 10px;
+            cursor: pointer;
+            border-radius: 20px;
+            z-index: 11;
+        }
+
+        #category-buttons button {
+            margin: 5px;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            z-index: 11;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: opacity 0.5s;
+            display: none;
+        }
+
+        .red-letter {
+            color: red;
+            font-weight: bold;
+        }
+
+        .spinner {
+            border: 16px solid #f3f3f3;
+            border-top: 16px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 2s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background-color: rgba(255, 255, 0, 0.7);
+            border-radius: 50%;
+            animation: float 10s infinite linear;
+            box-shadow: 100px 0 2px yellow;
+            z-index: 1; /* Ensure stars are behind content */
+            transition: transform 1s ease;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0); }
+            50% { transform: translate(var(--random-x), var(--random-y)); }
+            100% { transform: translate(0, 0); }
+        }
+    </style>
 </head>
 <body>
     <div id="main">
@@ -29,6 +122,202 @@
     <!-- Этот элемент "result" для вывода результата -->
     <div id="result"></div>
 
-    <script src="app.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+    const signs = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'];
+    const zodiacImagesContainer = document.getElementById('zodiac-images');
+    const categoryButtonsContainer = document.getElementById('category-buttons');
+    const resultDiv = document.getElementById('result');
+    let currentSign = '';
+
+    const gidMap = {
+        "aries_tomorrow": "aries_tomorrow",
+        "taurus_tomorrow": "taurus_tomorrow",
+        "gemini_tomorrow": "gemini_tomorrow",
+        "cancer_tomorrow": "cancer_tomorrow",
+        "leo_tomorrow": "leo_tomorrow",
+        "virgo_tomorrow": "virgo_tomorrow",
+        "libra_tomorrow": "libra_tomorrow",
+        "scorpio_tomorrow": "scorpio_tomorrow",
+        "sagittarius_tomorrow": "sagittarius_tomorrow",
+        "capricorn_tomorrow": "capricorn_tomorrow",
+        "aquarius_tomorrow": "aquarius_tomorrow",
+        "pisces_tomorrow": "pisces_tomorrow",
+        "aries_day": "aries_day",
+        "aries_week": "aries_week",
+        "aries_love_week": "aries_love_week",
+        "aries_love": "aries_love",
+        "aries_business_week": "aries_business_week",
+        "aries_business": "aries_business",
+        "taurus_day": "taurus_day",
+        "taurus_week": "taurus_week",
+        "taurus_love_week": "taurus_love_week",
+        "taurus_love": "taurus_love",
+        "taurus_business_week": "taurus_business_week",
+        "taurus_business": "taurus_business",
+        "gemini_day": "gemini_day",
+        "gemini_week": "gemini_week",
+        "gemini_love_week": "gemini_love_week",
+        "gemini_love": "gemini_love",
+        "gemini_business_week": "gemini_business_week",
+        "gemini_business": "gemini_business",
+        "cancer_day": "cancer_day",
+        "cancer_week": "cancer_week",
+        "cancer_love_week": "cancer_love_week",
+        "cancer_love": "cancer_love",
+        "cancer_business_week": "cancer_business_week",
+        "cancer_business": "cancer_business",
+        "leo_day": "leo_day",
+        "leo_week": "leo_week",
+        "leo_love_week": "leo_love_week",
+        "leo_love": "leo_love",
+        "leo_business_week": "leo_business_week",
+        "leo_business": "leo_business",
+        "virgo_day": "virgo_day",
+        "virgo_week": "virgo_week",
+        "virgo_love_week": "virgo_love_week",
+        "virgo_love": "virgo_love",
+        "virgo_business_week": "virgo_business_week",
+        "virgo_business": "virgo_business",
+        "libra_day": "libra_day",
+        "libra_week": "libra_week",
+        "libra_love_week": "libra_love_week",
+        "libra_love": "libra_love",
+        "libra_business_week": "libra_business_week",
+        "libra_business": "libra_business",
+        "scorpio_day": "scorpio_day",
+        "scorpio_week": "scorpio_week",
+        "scorpio_love_week": "scorpio_love_week",
+        "scorpio_love": "scorpio_love",
+        "scorpio_business_week": "scorpio_business_week",
+        "scorpio_business": "scorpio_business",
+        "sagittarius_day": "sagittarius_day",
+        "sagittarius_week": "sagittarius_week",
+        "sagittarius_love_week": "sagittarius_love_week",
+        "sagittarius_love": "sagittarius_love",
+        "sagittarius_business_week": "sagittarius_business_week",
+        "sagittarius_business": "sagittarius_business",
+        "capricorn_day": "capricorn_day",
+        "capricorn_week": "capricorn_week",
+        "capricorn_love_week": "capricorn_love_week",
+        "capricorn_love": "capricorn_love",
+        "capricorn_business_week": "capricorn_business_week",
+        "capricorn_business": "capricorn_business",
+        "aquarius_day": "aquarius_day",
+        "aquarius_week": "aquarius_week",
+        "aquarius_love_week": "aquarius_love_week",
+        "aquarius_love": "aquarius_love",
+        "aquarius_business_week": "aquarius_business_week",
+        "aquarius_business": "aquarius_business",
+        "pisces_day": "pisces_day",
+        "pisces_week": "pisces_week",
+        "pisces_love_week": "pisces_love_week",
+        "pisces_love": "pisces_love",
+        "pisces_business_week": "pisces_business_week",
+        "pisces_business": "pisces_business"
+    };
+
+    signs.forEach(sign => {
+        const img = document.createElement('img');
+        img.src = `${sign}.png`;
+        img.alt = sign;
+        img.onclick = () => {
+            currentSign = sign;
+            showCategoryButtons();
+        };
+        zodiacImagesContainer.appendChild(img);
+    });
+
+    function showCategoryButtons() {
+        zodiacImagesContainer.style.display = 'none';
+        categoryButtonsContainer.style.display = 'block';
+        categoryButtonsContainer.querySelectorAll('button').forEach(button => {
+            button.onclick = () => fetchHoroscope(currentSign, button.getAttribute('data-category'));
+        });
+    }
+
+    async function fetchHoroscope(sign, category) {
+    const key = `${sign}_${category}`;
+    const sheetName = gidMap[key];
+
+    if (!sheetName) {
+        console.error('Неверное сочетание знака и категории');
+        return;
+    }
+
+    const url = `https://script.google.com/macros/s/AKfycbzy5wqG-hOEXWr0TvRk4d469hWdY-xxOSqV8fma98sCGCjsFq-OmSLx8svRGoObrOI/exec?sheetName=${sheetName}`;
+
+    console.log(`Fetching data from: ${url}`);
+
+    // Показываем загрузочный индикатор
+    document.getElementById('loadingSpinner').style.display = 'block';
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Ошибка сети, статус: ${response.status}`);
+        }
+
+        const data = await response.text();
+        
+        const formattedData = data.split(/_-_/g).map(line => {
+            if (line.trim()) {
+                return `<p><span class="red-letter">${line.charAt(0)}</span>${line.slice(1)}</p>`;
+            }
+            return '';
+        }).join('');
+
+        console.log('Полученные данные:', formattedData);
+
+        resultDiv.innerHTML = formattedData;
+    } catch (error) {
+        console.error('Ошибка при загрузке данных:', error);
+        resultDiv.textContent = 'Ошибка при загрузке данных';
+    } finally {
+        // Скрываем загрузочный индикатор
+        document.getElementById('loadingSpinner').style.display = 'none';
+    }
+}
+
+
+
+
+
+
+
+// Создаем звездочки на экране
+            for (let i = 0; i < 150; i++) {
+                createStar();
+            }
+
+            function createStar() {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                const startX = Math.random() * window.innerWidth;
+                const startY = Math.random() * window.innerHeight;
+                const endX = (Math.random() - 0.5) * 200;
+                const endY = (Math.random() - 0.5) * 200;
+                star.style.left = `${startX}px`;
+                star.style.top = `${startY}px`;
+                star.style.setProperty('--random-x', `${endX}px`);
+                star.style.setProperty('--random-y', `${endY}px`);
+                document.body.appendChild(star);
+            }
+
+            
+
+           
+            
+            // Плавное появление результата
+            const observer = new MutationObserver(() => {
+                if (resultDiv.innerHTML.trim() !== "") {
+                    resultDiv.style.display = 'block';
+                    resultDiv.style.opacity = 1;
+                }
+            });
+
+            observer.observe(resultDiv, { childList: true, subtree: true });
+        });
+    </script>
 </body>
 </html>
