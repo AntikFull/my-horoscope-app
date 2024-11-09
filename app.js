@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     signs.forEach(sign => {
         const img = document.createElement('img');
-        img.src = `images/${sign}.png`;
+        img.src = `${sign}.png`;
         img.alt = sign;
         img.onclick = () => {
             currentSign = sign;
