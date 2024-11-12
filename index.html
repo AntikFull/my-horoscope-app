@@ -253,6 +253,7 @@
                     img.alt = sign;
                     img.onclick = () => {
                         currentSign = sign;
+						document.getElementById('zodiac-title').style.opacity = 0; // Скрываем заголовок
                         selectedSignImage.src = `${sign}.png`;
                         selectedSignImage.alt = sign;
                         showCategoryButtons();
