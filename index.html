@@ -138,13 +138,14 @@
     </div>
 
     <!-- Подключаем библиотеку VK Bridge -->
-     <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
+    <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Инициализация VK Bridge
             vkBridge.send('VKWebAppInit')
                 .then(() => {
                     console.log('VK Bridge успешно инициализирован');
-                    initializeApp();
+                    initializeApp(); // Запускаем функцию инициализации приложения
                 })
                 .catch(error => {
                     console.error('Ошибка инициализации VK Bridge:', error);
@@ -157,7 +158,6 @@
                 const selectedSign = document.getElementById('selected-sign');
                 const selectedSignImage = document.getElementById('selected-sign-image');
                 const resultDiv = document.getElementById('result');
-                const zodiacTitle = document.getElementById('zodiac-title');
                 let currentSign = '';
 
                 const gidMap = {
@@ -247,7 +247,7 @@
                     "pisces_business": "pisces_business"
                 };
 
-               signs.forEach(sign => {
+                signs.forEach(sign => {
                     const img = document.createElement('img');
                     img.src = `${sign}.png`;
                     img.alt = sign;
@@ -261,7 +261,6 @@
                 });
 
                 function showCategoryButtons() {
-                    zodiacTitle.style.display = 'none';
                     zodiacImagesContainer.style.display = 'none';
                     selectedSign.style.display = 'block';
                     categoryButtonsContainer.style.display = 'block';
@@ -277,7 +276,6 @@
                 }
 
                 function goBackToSignSelection() {
-                    zodiacTitle.style.display = 'block';
                     categoryButtonsContainer.style.display = 'none';
                     selectedSign.style.display = 'none';
                     zodiacImagesContainer.style.display = 'block';
