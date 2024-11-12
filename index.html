@@ -40,7 +40,8 @@
             z-index: 11;
         }
 
-        #category-buttons button {
+        #category-buttons button,
+        #back-button {
             margin: 5px;
             padding: 10px;
             font-size: 16px;
@@ -112,6 +113,7 @@
             <button data-category="business">Бизнес</button>
             <button data-category="business_week">Бизнес неделя</button>
             <button data-category="tomorrow">Завтра</button>
+            <button id="back-button">Назад</button> <!-- Кнопка для возврата -->
         </div>
 
         <div id="loadingSpinner" style="display: none;">
@@ -244,8 +246,22 @@
                     zodiacImagesContainer.style.display = 'none';
                     categoryButtonsContainer.style.display = 'block';
                     categoryButtonsContainer.querySelectorAll('button').forEach(button => {
-                        button.onclick = () => fetchHoroscope(currentSign, button.getAttribute('data-category'));
+                        button.onclick = () => {
+                            if (button.id === 'back-button') {
+                                goBackToSignSelection();
+                            } else {
+                                fetchHoroscope(currentSign, button.getAttribute('data-category'));
+                            }
+                        };
                     });
+                }
+
+                function goBackToSignSelection() {
+                    categoryButtonsContainer.style.display = 'none';
+                    zodiacImagesContainer.style.display = 'block';
+                    resultDiv.style.display = 'none';
+                    resultDiv.style.opacity = 0;
+                    resultDiv.innerHTML = '';
                 }
 
                 async function fetchHoroscope(sign, category) {
