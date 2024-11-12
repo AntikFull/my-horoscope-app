@@ -264,19 +264,41 @@
                     "pisces_business": "pisces_business"
                 };
 
-                signs.forEach(sign => {
-                    const img = document.createElement('img');
-                    img.src = `${sign}.png`;
-                    img.alt = sign;
-                    img.onclick = () => {
-                        currentSign = sign;
-						document.getElementById('zodiac-title').style.opacity = 0; // Скрываем заголовок
-                        selectedSignImage.src = `${sign}.png`;
-                        selectedSignImage.alt = sign;
-                        showCategoryButtons();
-                    };
-                    zodiacImagesContainer.appendChild(img);
-                });
+const imagesToLoad = []; // Массив для хранения промисов загрузки изображений
+
+        signs.forEach(sign => {
+            const img = document.createElement('img');
+            img.alt = sign;
+             img.src = `${sign}.png`;  // Устанавливаем src ПОСЛЕ добавления слушателя onload
+
+            img.onclick = () => {  // Перемещаем это *после* загрузки изображения
+                currentSign = sign;
+                selectedSignImage.src = `${sign}.png`;
+                selectedSignImage.alt = sign;
+                showCategoryButtons();
+                document.getElementById('zodiac-title').style.opacity = 0; 
+            };
+
+            imagesToLoad.push(new Promise((resolve, reject) => { // Создаем промис для каждого изображения
+                img.onload = resolve; // Разрешаем промис, когда изображение загружено
+                img.onerror = reject; // Отклоняем, если ошибка
+            }));
+
+            zodiacImagesContainer.appendChild(img);
+        });
+
+        Promise.all(imagesToLoad) // Ждем, пока все изображения загрузятся (или произойдет ошибка)
+            .then(() => {
+                document.getElementById('loadingSpinner').style.display = 'none';
+                document.getElementById('main').style.display = 'block';
+            })
+            .catch(error => {
+                console.error("Ошибка загрузки изображений:", error);
+                // Обрабатываем ошибку, например, показываем сообщение пользователю
+                document.getElementById('loadingSpinner').style.display = 'none'; // Скрываем спиннер даже при ошибке
+                document.getElementById('main').style.display = 'block'; // Показываем контент, возможно, с сообщением об ошибке
+                document.getElementById('zodiac-images').innerHTML = "<p>Ошибка загрузки изображений. Пожалуйста, попробуйте позже.</p>";
+            });
 
                 function showCategoryButtons() {
                     zodiacImagesContainer.style.display = 'none';
