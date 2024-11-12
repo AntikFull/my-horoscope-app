@@ -111,7 +111,8 @@
 </head>
 <body>
     <div id="main">
-        <h1>Выберите знак зодиака</h1>
+<!--         <h1>Выберите знак зодиака</h1> -->
+	     <h1 id="zodiac-title">Выберите знак зодиака</h1>  <!-- Добавлен id -->
         <div id="zodiac-images"></div>
 
         <div id="selected-sign">
@@ -253,7 +254,7 @@
                     img.alt = sign;
                     img.onclick = () => {
                         currentSign = sign;
-						// document.getElementById('zodiac-title').style.opacity = 0; // Скрываем заголовок
+						document.getElementById('zodiac-title').style.opacity = 0; // Скрываем заголовок
                         selectedSignImage.src = `${sign}.png`;
                         selectedSignImage.alt = sign;
                         showCategoryButtons();
