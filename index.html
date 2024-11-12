@@ -40,6 +40,11 @@
             z-index: 11;
         }
 
+        #selected-sign {
+            display: none;
+            margin-bottom: 20px;
+        }
+
         #category-buttons button,
         #back-button {
             margin: 5px;
@@ -104,17 +109,22 @@
     <div id="main">
         <h1>Выберите знак зодиака</h1>
         <div id="zodiac-images"></div>
+
+        <div id="selected-sign">
+            <img id="selected-sign-image" src="" alt="Selected Zodiac"/>
+        </div>
         
         <div id="category-buttons" style="display: none;">
-            <button data-category="day">На день</button>
-            <button data-category="week">Неделя</button>
+            <button data-category="day">На сегодня</button>
+            <button data-category="tomorrow">На завтра</button>
+            <button data-category="week">На неделю</button>
             <button data-category="love">Любовный</button>
             <button data-category="love_week">Любовный на неделю</button>
             <button data-category="business">Бизнес</button>
-            <button data-category="business_week">Бизнес неделя</button>
-            <button data-category="tomorrow">Завтра</button>
+            <button data-category="business_week">Бизнес на неделю</button>
+            
             <button id="back-button">Назад</button> <!-- Кнопка для возврата -->
-        </div>
+       </div>
 
         <div id="loadingSpinner" style="display: none;">
             <div class="spinner"></div>
@@ -141,6 +151,8 @@
                 const signs = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'];
                 const zodiacImagesContainer = document.getElementById('zodiac-images');
                 const categoryButtonsContainer = document.getElementById('category-buttons');
+                const selectedSign = document.getElementById('selected-sign');
+                const selectedSignImage = document.getElementById('selected-sign-image');
                 const resultDiv = document.getElementById('result');
                 let currentSign = '';
 
@@ -237,6 +249,8 @@
                     img.alt = sign;
                     img.onclick = () => {
                         currentSign = sign;
+                        selectedSignImage.src = `${sign}.png`;
+                        selectedSignImage.alt = sign;
                         showCategoryButtons();
                     };
                     zodiacImagesContainer.appendChild(img);
@@ -244,6 +258,7 @@
 
                 function showCategoryButtons() {
                     zodiacImagesContainer.style.display = 'none';
+                    selectedSign.style.display = 'block';
                     categoryButtonsContainer.style.display = 'block';
                     categoryButtonsContainer.querySelectorAll('button').forEach(button => {
                         button.onclick = () => {
@@ -258,6 +273,7 @@
 
                 function goBackToSignSelection() {
                     categoryButtonsContainer.style.display = 'none';
+                    selectedSign.style.display = 'none';
                     zodiacImagesContainer.style.display = 'block';
                     resultDiv.style.display = 'none';
                     resultDiv.style.opacity = 0;
